@@ -38,7 +38,10 @@ int _printf(const char *format, ...)
 						buffer_h = print_char(va_arg(ap, int), buffer_h);
 						break;
 					case 's':
-						buffer_h = print_str(va_arg(ap, char *), buffer_h);
+						buffer_h = print_str(va_arg(ap, char *), buffer_h, '0');
+						break;
+					case 'r':
+						buffer_h = print_str(va_arg(ap, char *), buffer_h, 'r');
 						break;
 					case 'S':
 						buffer_h = print_strcap(va_arg(ap, char *), buffer_h) - 1;

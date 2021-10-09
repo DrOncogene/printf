@@ -13,7 +13,7 @@ int main(void)
 	len3 = _printf("98(2): %b, 98(8): %o, %S\n", 98, 98, "Best\n\aSchool");
 	_printf("len1: %i, len2: %x, len3: %u\n", len1, &len2, -10);
 	printf("Len: %u 12: %x 250(8): %x or %d\n", -10, 12, 250, len3);
-	len4 = _printf("%p, %p, %s %k\n", (void *)0x6fff5100b608, NULL, (char *)0);
+	len4 = _printf("%p, %p, %r %k\n", (void *)0x6fff5100b608, NULL, "Nasir");
 	_printf("%d\n", len4);
 
 	return (0);

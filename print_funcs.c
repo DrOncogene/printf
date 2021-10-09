@@ -21,10 +21,13 @@ char *print_char(char c, char *buff)
   * print_str - copies a string to a buffer
   * @s: the string
   * @buff: the buffer
+  * @flag: 'r' to print the string in reverse
   * Return: the number of chars written
   */
-char *print_str(char *s, char *buff)
+char *print_str(char *s, char *buff, char flag)
 {
+	int i;
+
 	if (s == NULL)
 	{
 		memcpy(buff, "(null)", 6);
@@ -32,7 +35,18 @@ char *print_str(char *s, char *buff)
 	}
 	if (*s == 0)
 		return (buff);
-	memcpy(buff, s, len(s));
+	if (flag == 'r')
+	{
+		buff += (len(s) - 1);
+		for (i = 0; i < len(s); i++)
+		{
+			memcpy(buff, (s + i), 1);
+			buff--;
+		}
+		buff++;
+	}
+	else
+		memcpy(buff, s, len(s));
 	return (buff + len(s) - 1);
 }
 
