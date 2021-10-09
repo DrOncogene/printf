@@ -17,13 +17,11 @@ int _printf(const char *format, ...)
 
 	n_char = 0;
 	va_start(ap, format);
-	buffer = malloc(sizeof(char) * 1024);
 
 	if (format == NULL)
-	{
-		free(buffer);
 		return (n_char);
-	}
+
+	buffer = malloc(sizeof(char) * 1024);
 	if (buffer != NULL)
 	{
 		buffer_h = buffer;
