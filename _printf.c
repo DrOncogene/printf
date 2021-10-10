@@ -59,7 +59,8 @@ int _printf(const char *format, ...)
 								curr_flags);
 						break;
 					case 'u':
-						buffer_h = print_uint(va_arg(ap, unsigned int), buffer_h);
+						buffer_h = print_uint(va_arg(ap, unsigned int),
+								buffer_h, curr_flags);
 						break;
 					case 'b':
 						buffer_h = print_base(va_arg(ap, unsigned int), 2,

@@ -5,21 +5,27 @@
 /**
   * render_flags - renders the output of flags
   * @flags: string containing the flags
-  * buff: the buffer to save the output in
-  * base: base of the num being printed
+  * @buff: the buffer to save the output in
+  * @base: base of the num being printed
+  * @num: 0 if num is pos, -1 if neg, 0 if not a number
+  * @str: 1 if a string, 0 otherwise
   * Return: pointer to the last filled location in buff
   */
-char *render_flags(char *flags, char *buff, int base)
+char *render_flags(char *flags, char *buff, int base, int num, int str)
 {
 	while (*flags != 0)
 	{
 		switch (*flags)
 		{
 			case '+':
-				buff = plus_flag(buff);
+				if (num != -1 && str == 0)
+					buff = plus_flag(buff);
+				else
+					buff--;
 				break;
 			case ' ':
-				buff = invisible_plus(buff);
+				if (num != -1 && str == 0)
+					buff = invisible_plus(buff);
 				break;
 			case '-':
 				break;

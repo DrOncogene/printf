@@ -22,14 +22,14 @@ char *print_char(char c, char *buff)
   * @s: the string
   * @buff: the buffer
   * @flag: 'r' to print the string in reverse
-  * @flags: associated printf flags
+  * @flags: associated flags
   * Return: the number of chars written
   */
 char *print_str(char *s, char *buff, char flag, char *flags)
 {
 	int i;
 
-	buff = render_flags(flags, buff, 0);
+	buff = render_flags(flags, buff, 10, 0, 1);
 	if (s == NULL)
 	{
 		memcpy(buff, "(null)", 6);
@@ -63,8 +63,14 @@ char *print_strcap(char *s, char *buff, char *flags)
 {
 	int i;
 
-	if (s == NULL || *s == 0)
-		return (buff + 1);
+	if (s == NULL)
+	{
+		memcpy(buff, "(null)", 6);
+		return (buff + 5);
+	}
+	if (*s == 0)
+		return (buff);
+	buff = render_flags(flags, buff, 10, 0, 1);
 	for (i = 0; i < len(s); i++)
 	{
 		if (*(s + i) > 0 && (*(s + i) < 32 || *(s + i) >= 127))
@@ -75,7 +81,7 @@ char *print_strcap(char *s, char *buff, char *flags)
 				memcpy(buff + 2, "0", 1);
 				buff++;
 			}
-			buff = print_base(*(s + i), 16, 'X', (buff + 2), flags);
+			buff = print_base(*(s + i), 16, 'X', (buff + 2), "");
 		}
 		else
 			memcpy(buff, s + i, 1);
@@ -96,12 +102,16 @@ char *print_int(int num, char *buff, char *flags)
 {
 	unsigned int len_s;
 
-	buff = render_flags(flags, buff, 10);
-
 	if (num < 0)
+	{
 		len_s = len_int(num * -1) + 1;
+		buff = render_flags(flags, buff, 10, -1, 0);
+	}
 	else
+	{
 		len_s = len_int(num);
+		buff = render_flags(flags, buff, 10, 1, 0);
+	}
 
 	return (save_int(buff, num, len_s));
 }
@@ -110,12 +120,14 @@ char *print_int(int num, char *buff, char *flags)
   * print_uint - prints unsigned ints to a buffer
   * @num: the number
   * @buff: the buffer for saving
+  * @flags: associated flags
   * Return: pointer to the start of the strings
   */
-char *print_uint(int num, char *buff)
+char *print_uint(int num, char *buff, char *flags)
 {
 	unsigned int len_s, u_num;
 
+	buff = render_flags(flags, buff, 10, 1, 0);
 	if (num < 0)
 	{
 		u_num = UINT_MAX + 1 + num;
@@ -148,7 +160,7 @@ char *print_base(unsigned long int num, unsigned int base, char f,
 	buffer[0] = '\0';
 	ptr = &buffer[0];
 	if (*flags != 0)
-		buff = render_flags(flags, buff, base);
+		buff = render_flags(flags, buff, base, 1, 0);
 
 	do {
 		if (f == 'X')
