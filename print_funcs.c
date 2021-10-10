@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <limits.h>
-#include <stdint.h>
+#include <stdio.h>
 
 /**
   * print_char - copies a char to a buffer
@@ -22,12 +22,14 @@ char *print_char(char c, char *buff)
   * @s: the string
   * @buff: the buffer
   * @flag: 'r' to print the string in reverse
+  * @flags: associated printf flags
   * Return: the number of chars written
   */
-char *print_str(char *s, char *buff, char flag)
+char *print_str(char *s, char *buff, char flag, char *flags)
 {
 	int i;
 
+	buff = render_flags(flags, buff, 0);
 	if (s == NULL)
 	{
 		memcpy(buff, "(null)", 6);
@@ -54,9 +56,10 @@ char *print_str(char *s, char *buff, char flag)
   * print_strcap - prints a string, with non-printables as \x+hex value
   * @s: string
   * @buff: buffer save to
+  * @flags: associated flags
   * Return: pointer to buffer
   */
-char *print_strcap(char *s, char *buff)
+char *print_strcap(char *s, char *buff, char *flags)
 {
 	int i;
 
@@ -72,7 +75,7 @@ char *print_strcap(char *s, char *buff)
 				memcpy(buff + 2, "0", 1);
 				buff++;
 			}
-			buff += print_base(*(s + i), 16, 'X', (buff + 2), 0) + 1;
+			buff = print_base(*(s + i), 16, 'X', (buff + 2), flags);
 		}
 		else
 			memcpy(buff, s + i, 1);
@@ -86,11 +89,14 @@ char *print_strcap(char *s, char *buff)
   * print_int - copies an integer to a buffer
   * @num: the integer
   * @buff: the buffer
+  * @flags: associated flags
   * Return: number of digits written
   */
-char *print_int(int num, char *buff)
+char *print_int(int num, char *buff, char *flags)
 {
 	unsigned int len_s;
+
+	buff = render_flags(flags, buff, 10);
 
 	if (num < 0)
 		len_s = len_int(num * -1) + 1;
@@ -128,33 +134,38 @@ char *print_uint(int num, char *buff)
   * @base: the base to be converted to
   * @f: a flag to specify upper or lower case letter in base 16 (x or X)
   * @buff: the buffer
-  * @pos: current position in the result
+  * @flags: associated flags(usually '#')
   * Return: number of digits printed
   */
-int print_base(unsigned long int num, unsigned int base, char f,
-		char *buff, unsigned int pos)
+char *print_base(unsigned long int num, unsigned int base, char f,
+		char *buff, char *flags)
 {
-	char d;
+	char Char_repr[] = "0123456789ABCDEF";
+	char Char_repr_lower[] = "0123456789abcdef";
+	char buffer[50];
+	char *ptr;
 
-	if (num / base == 0)
-	{
-		if (base == 16 && num > 9)
-			d = hex(num, f);
+	buffer[0] = '\0';
+	ptr = &buffer[0];
+	if (*flags != 0)
+		buff = render_flags(flags, buff, base);
+
+	do {
+		if (f == 'X')
+			*++ptr = Char_repr[num % base];
 		else
-			d = num + '0';
-		(memcpy(buff, &d, 1));
-		return (1);
+			*++ptr = Char_repr_lower[num % base];
+		num /= base;
+	} while (num != 0);
+
+	while (*ptr != 0)
+	{
+		buff = memcpy(buff, ptr, 1);
+		ptr--;
+		buff++;
 	}
 
-	pos += print_base(num / base, base, f, buff, pos);
-
-	if (base == 16 && num % base > 9)
-		d = hex(num % base, f);
-	else
-		d = (num % base) + '0';
-	memcpy(buff + pos, &d, 1);
-
-	return (pos + 1);
+	return (--buff);
 }
 
 /**
@@ -171,6 +182,6 @@ char *print_p(size_t p, char *buff)
 		return (buff + 4);
 	}
 	memcpy(buff, "0x", 2);
-	buff += print_base(p, 16, 'x', (buff + 2), 0) + 1;
+	buff = print_base(p, 16, 'x', (buff + 2), "");
 	return (buff);
 }
